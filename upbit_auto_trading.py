@@ -1,4 +1,4 @@
-# 자동매매 코인개수 기준매매
+# 자동매매 30분봉 진입 1분봉 절반매도 30분봉 절반매도 미완성
 
 import time
 import pyupbit
@@ -8,8 +8,8 @@ import math
 access = "jXmymUVzgyJnixtTcYPfP7axp5YKpceWqBxVBplY"
 secret = "Pc1YbwzPgJxVzwPYF9fPkenfqt3pKi50geoxLruq"
 
-def macd_osc_trading(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval='minute30', count = '200')
+def macd_osc_trading(ticker, interval):
+    df = pyupbit.get_ohlcv(ticker, interval, count = '200')
     macd = df.close.ewm(span=12).mean() - df.close.ewm(span=26).mean() # 장기(26) EMA
     macds = macd.ewm(span=9).mean() # Signal
     macdo = macd - macds # Oscillato
@@ -23,9 +23,9 @@ def macd_osc_trading(ticker):
             elif (df.iloc[x-1]['macdo_is_positive'] == 1) and (df.iloc[x]['macdo_is_positive'] == 1):
                 buy_or_sell.append('no')      
             elif (df.iloc[x-1]['macdo_is_positive'] == 0) and (df.iloc[x]['macdo_is_positive'] == 1):
-                buy_or_sell.append('buy')     
+                buy_or_sell.append('buy')
             elif (df.iloc[x-1]['macdo_is_positive'] == 1) and (df.iloc[x]['macdo_is_positive'] == 0):
-                buy_or_sell.append('sell')     
+                buy_or_sell.append('sell')
             else :
                 pass
         else:
