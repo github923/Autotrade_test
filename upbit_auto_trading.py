@@ -1,6 +1,9 @@
+# 자동매매 코인개수 기준매매
+
 import time
 import pyupbit
 import datetime
+import math
 
 access = "jXmymUVzgyJnixtTcYPfP7axp5YKpceWqBxVBplY"
 secret = "Pc1YbwzPgJxVzwPYF9fPkenfqt3pKi50geoxLruq"
@@ -29,7 +32,7 @@ def macd_osc_trading(ticker):
             buy_or_sell.append('first')
     df['buy_or_sell'] = buy_or_sell
     
-    return df['buy_or_sell'][-1]
+    return df
 
 
 def get_start_time(ticker):
@@ -58,26 +61,29 @@ print("autotrade start")
 
 # 자동매매 시작
 while True:
-    coin_sell_price = 5000/get_current_price('KRW-VET')
+    Minimum_coin_selling_price = 5000/get_current_price('KRW-VET')
+#     getbalance아님
     try:
-        if macd_osc_trading(ticker = 'KRW-VET') == 'buy':
-            krw = get_balance("KRW")
-            if krw > 5000:
-                upbit.buy_market_order("KRW-VET")
+        Immediate_purchase_price = pyupbit.get_orderbook(tickers="KRW-VET")[0]["orderbook_units"][0]["ask_price"]
+        Number_of_coins = math.floor(get_balance("KRW") / Immediate_purchase_price)
+        if macd_osc_trading(ticker = 'KRW-VET')['buy_or_sell'][-1] == 'buy':
+            if get_balance("KRW") > 5000:
+#                 즉시 구매가=판매 1호가
+                Immediate_purchase_price = pyupbit.get_orderbook(tickers="KRW-VET")[0]["orderbook_units"][0]["ask_price"]
+                upbit.buy_limit_order("KRW-VET", price = Immediate_purchase_price, volume = Number_of_coins)
                 time = time.time()
-                print(time)
-                print(get_balance('KRW-VET'))
-                print("buying")
-        elif macd_osc_trading(ticker = 'KRW-VET') == 'sell':
-            coin = get_balance('KRW-VET')
-            if coin > coin_sell_price:
-                upbit.sell_market_order("KRW-VET")
+                print(time, get_balance("KRW-VET"), "buying")
+        elif macd_osc_trading(ticker = 'KRW-VET')['buy_or_sell'][-1] == 'sell':
+            if get_balance('KRW-VET') > Minimum_coin_selling_price:
+#                 즉시 판매가=구매 1호가
+                Immediate_selling_price = pyupbit.get_orderbook(tickers="KRW-VET")[0]["orderbook_units"][0]["bid_price"]
+                upbit.sell_limit_order("KRW-VET", price = Immediate_selling_price, volume = Number_of_coins)
                 time = time.time()
-                print(time)
-                print(get_balance("KRW-VET"))
-                print("selling")
-#         print(macd_osc_trading(ticker = 'KRW-VET'))
+                print(time, get_balance("KRW-VET"), "selling")
+#         buy_or_sell 상태 반복노출
+#         print(macd_osc_trading(ticker = 'KRW-VET')['buy_or_sell'][-1])
         time.sleep(1)
+        
     except Exception as e:
         print(e)
         time.sleep(1)
