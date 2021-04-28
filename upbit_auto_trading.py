@@ -6,7 +6,7 @@ access = "jXmymUVzgyJnixtTcYPfP7axp5YKpceWqBxVBplY"
 secret = "Pc1YbwzPgJxVzwPYF9fPkenfqt3pKi50geoxLruq"
 
 def macd_osc_trading(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval='minute60', count = '200')
+    df = pyupbit.get_ohlcv(ticker, interval='minute30', count = '200')
     macd = df.close.ewm(span=12).mean() - df.close.ewm(span=26).mean() # 장기(26) EMA
     macds = macd.ewm(span=9).mean() # Signal
     macdo = macd - macds # Oscillato
@@ -66,7 +66,7 @@ while True:
                 if krw > 5000:
                     upbit.buy_market_order("KRW-AXS", krw*0.9995)
         elif macd_osc_trading(ticker = 'KRW-AXS') == 'sell':
-            coin = get_balance("MBL")
+            coin = get_balance("KRW-AXS")
             if coin > coin_sell_price:
                 upbit.sell_market_order("KRW-AXS", coin*0.9995)
         # print(macd_osc_trading(ticker = 'KRW-AXS'))
