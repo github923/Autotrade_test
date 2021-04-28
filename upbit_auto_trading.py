@@ -58,25 +58,25 @@ print("autotrade start")
 
 # 자동매매 시작
 while True:
-    coin_sell_price = 5000/get_current_price('KRW-VET')
+    coin_sell_price = 5000/get_current_price('KRW-XRP')
     try:
-        if macd_osc_trading(ticker = 'KRW-VET') == 'buy':
+        if macd_osc_trading(ticker = 'KRW-XRP') == 'buy':
             krw = get_balance("KRW")
             if krw > 5000:
-                upbit.buy_market_order("KRW-VET")
+                upbit.buy_market_order("KRW-XRP")
                 time = time.time()
                 print(time)
-                print(get_balance("VET"))
+                print(get_balance('KRW-XRP'))
                 print("buying")
-        elif macd_osc_trading(ticker = 'KRW-VET') == 'sell':
-            coin = get_balance("VET")
+        elif macd_osc_trading(ticker = 'KRW-XRP') == 'sell':
+            coin = get_balance('KRW-XRP')
             if coin > coin_sell_price:
-                upbit.sell_market_order("KRW-VET")
+                upbit.sell_market_order("KRW-XRP")
                 time = time.time()
                 print(time)
-                print(get_balance("VET"))
+                print(get_balance("XRP"))
                 print("selling")
-#         print(macd_osc_trading(ticker = 'KRW-VET'))
+#         print(macd_osc_trading(ticker = 'KRW-XRP'))
         time.sleep(1)
     except Exception as e:
         print(e)
