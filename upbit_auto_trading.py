@@ -1,15 +1,12 @@
-# 자동매매 30분봉 진입 1분봉 절반매도 30분봉 절반매도 미완성
-
 import time
 import pyupbit
 import datetime
-import math
 
 access = "jXmymUVzgyJnixtTcYPfP7axp5YKpceWqBxVBplY"
 secret = "Pc1YbwzPgJxVzwPYF9fPkenfqt3pKi50geoxLruq"
 
-def macd_osc_trading(ticker, interval):
-    df = pyupbit.get_ohlcv(ticker, interval, count = '200')
+def macd_osc_trading(ticker):
+    df = pyupbit.get_ohlcv(ticker, interval='minute60', count = '200')
     macd = df.close.ewm(span=12).mean() - df.close.ewm(span=26).mean() # 장기(26) EMA
     macds = macd.ewm(span=9).mean() # Signal
     macdo = macd - macds # Oscillato
@@ -23,16 +20,16 @@ def macd_osc_trading(ticker, interval):
             elif (df.iloc[x-1]['macdo_is_positive'] == 1) and (df.iloc[x]['macdo_is_positive'] == 1):
                 buy_or_sell.append('no')      
             elif (df.iloc[x-1]['macdo_is_positive'] == 0) and (df.iloc[x]['macdo_is_positive'] == 1):
-                buy_or_sell.append('buy')
+                buy_or_sell.append('buy')     
             elif (df.iloc[x-1]['macdo_is_positive'] == 1) and (df.iloc[x]['macdo_is_positive'] == 0):
-                buy_or_sell.append('sell')
+                buy_or_sell.append('sell')     
             else :
                 pass
         else:
             buy_or_sell.append('first')
     df['buy_or_sell'] = buy_or_sell
     
-    return df
+    return df['buy_or_sell'][-1]
 
 
 def get_start_time(ticker):
@@ -61,29 +58,19 @@ print("autotrade start")
 
 # 자동매매 시작
 while True:
-    Minimum_coin_selling_price = 5000/get_current_price('KRW-MED')
-#     getbalance아님
+    coin_sell_price = 5000/get_current_price('KRW-AXS')
     try:
-        Immediate_purchase_price = pyupbit.get_orderbook(tickers="KRW-MED")[0]["orderbook_units"][0]["ask_price"]
-        Number_of_coins = math.floor(get_balance("KRW") / Immediate_purchase_price)
-        if macd_osc_trading(ticker = 'KRW-MED')['buy_or_sell'][-1] == 'buy':
-            if get_balance("KRW") > 5000:
-#                 즉시 구매가=판매 1호가
-                Immediate_purchase_price = pyupbit.get_orderbook(tickers="KRW-MED")[0]["orderbook_units"][0]["ask_price"]
-                upbit.buy_limit_order("KRW-MED", price = Immediate_purchase_price, volume = Number_of_coins)
-                time = time.time()
-                print(time, get_balance("KRW-MED"), "buying")
-        elif macd_osc_trading(ticker = 'KRW-MED')['buy_or_sell'][-1] == 'sell':
-            if get_balance('KRW-MED') > Minimum_coin_selling_price:
-#                 즉시 판매가=구매 1호가
-                Immediate_selling_price = pyupbit.get_orderbook(tickers="KRW-MED")[0]["orderbook_units"][0]["bid_price"]
-                upbit.sell_limit_order("KRW-MED", price = Immediate_selling_price, volume = Number_of_coins)
-                time = time.time()
-                print(time, get_balance("KRW-MED"), "selling")
-#         buy_or_sell 상태 반복노출
-#         print(macd_osc_trading(ticker = 'KRW-MED')['buy_or_sell'][-1])
+        if macd_osc_trading(ticker = 'KRW-AXS') == 'buy':
+            if target_price < current_price:
+                krw = get_balance("KRW")
+                if krw > 5000:
+                    upbit.buy_market_order("KRW-AXS", krw*0.9995)
+        elif macd_osc_trading(ticker = 'KRW-AXS') == 'sell':
+            coin = get_balance("MBL")
+            if coin > coin_sell_price:
+                upbit.sell_market_order("KRW-AXS", coin*0.9995)
+        # print(macd_osc_trading(ticker = 'KRW-AXS'))
         time.sleep(1)
-        
     except Exception as e:
         print(e)
         time.sleep(1)
