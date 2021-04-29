@@ -37,13 +37,14 @@ def trading(ticker):
     df = macd_osc(ticker)
     df['macdo_is_positive'] = df['macdo'] > 0
     
-    if (df.iloc[-2]['macdo_is_positive'] == 0) and (df.iloc[-1]['macdo_is_positive'] == 0):
+    
+    if (df.iloc[-2]['macdo_is_positive'] == 1) & (df.iloc[-3]['macdo_is_positive'] == 0) & (df.iloc[-4]['macdo_is_positive'] == 1):
         buy_or_sell = 0
-    elif (df.iloc[-2]['macdo_is_positive'] == 1) and (df.iloc[-1]['macdo_is_positive'] == 1):
+    if (df.iloc[-2]['macdo_is_positive'] == 0) & (df.iloc[-3]['macdo_is_positive'] == 1) & (df.iloc[-4]['macdo_is_positive'] == 0):
         buy_or_sell = 0
-    elif (df.iloc[-2]['macdo_is_positive'] == 0) and (df.iloc[-1]['macdo_is_positive'] == 1):
+    elif (df.iloc[-2]['macdo_is_positive'] == 1):
         buy_or_sell = 1
-    elif (df.iloc[-2]['macdo_is_positive'] == 1) and (df.iloc[-1]['macdo_is_positive'] == 0):
+    elif (df.iloc[-2]['macdo_is_positive'] == 0):
         buy_or_sell = 2
     else :
         pass
@@ -55,19 +56,19 @@ def trading(ticker):
 # 자동매매 시작
 while True:
     try:
-        if trading('KRW-XRP') == 1:
+        if trading('KRW-DOGE') == 1:
             krw = get_balance("KRW")
-            upbit.buy_market_order("KRW-XRP", krw*0.9995)
+            upbit.buy_market_order("KRW-DOGE", krw*0.9995)
             print("buy")
-        elif trading('KRW-XRP') == 2:
-            coin = get_balance("KRW-XRP")
-            upbit.sell_market_order("KRW-XRP", coin*0.9995)
+        elif trading('KRW-DOGE') == 2:
+            coin = get_balance("KRW-DOGE")
+            upbit.sell_market_order("KRW-DOGE", coin*0.9995)
             print("sell")
-        elif trading('KRW-XRP') == 0:
+        elif trading('KRW-DOGE') == 0:
             print('no')
         else :
             pass
-        print(macd_osc('KRW-XRP').iloc[-1]['macdo'])
+        print(macd_osc('KRW-DOGE').iloc[-1]['macdo'])
         time.sleep(1)
         
     except Exception as e:
