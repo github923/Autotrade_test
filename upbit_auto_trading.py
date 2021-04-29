@@ -37,15 +37,10 @@ def trading(ticker):
     df = macd_osc(ticker)
     df['macdo_is_positive'] = df['macdo'] > 0
     
-    
-    if (df.iloc[-2]['macdo_is_positive'] == 1) & (df.iloc[-3]['macdo_is_positive'] == 0) & (df.iloc[-4]['macdo_is_positive'] == 1):
-        buy_or_sell = 0
-    if (df.iloc[-2]['macdo_is_positive'] == 0) & (df.iloc[-3]['macdo_is_positive'] == 1) & (df.iloc[-4]['macdo_is_positive'] == 0):
-        buy_or_sell = 0
-    elif (df.iloc[-2]['macdo_is_positive'] == 1):
-        buy_or_sell = 1
+    if (df.iloc[-2]['macdo_is_positive'] == 1):
+            buy_or_sell = 1
     elif (df.iloc[-2]['macdo_is_positive'] == 0):
-        buy_or_sell = 2
+            buy_or_sell = 2
     else :
         pass
 
