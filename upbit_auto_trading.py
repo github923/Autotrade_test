@@ -55,7 +55,7 @@ while True:
                 upbit.buy_market_order("KRW-MED", krw*0.9995)
                 print("buy")
                 print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
-                time.sleep(60)
+                time.sleep(120)
             else:
                 print('buy__')
                 print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
@@ -65,7 +65,7 @@ while True:
                 upbit.sell_market_order("KRW-MED", upbit.get_balance('KRW-MED')*0.9995)
                 print("sell")
                 print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
-                time.sleep(60)
+                time.sleep(120)
             else:
                 print('sell__')
                 print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
