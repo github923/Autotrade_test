@@ -49,27 +49,27 @@ def trading(ticker):
 
 while True:
     try:
-        if trading('KRW-DOGE') == 1:
+        if trading('KRW-MED') == 1:
             if upbit.get_balance("KRW")>5000:
                 krw = upbit.get_balance("KRW")
-                upbit.buy_market_order("KRW-DOGE", krw*0.9995)
+                upbit.buy_market_order("KRW-MED", krw*0.9995)
                 print("buy")
-                print('macdo',macd_osc('KRW-DOGE').iloc[-1]['macdo'])
+                print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
                 time.sleep(60)
             else:
                 print('buy__')
-                print('macdo',macd_osc('KRW-DOGE').iloc[-1]['macdo'])
-        elif trading('KRW-DOGE') == 2:
-            if upbit.get_balance('KRW-DOGE')*get_current_price('KRW-DOGE')>5000:
-                coin = upbit.get_balance('KRW-DOGE')
-                upbit.sell_market_order("KRW-DOGE", upbit.get_balance('KRW-DOGE')*0.9995)
+                print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
+        elif trading('KRW-MED') == 2:
+            if upbit.get_balance('KRW-MED')*get_current_price('KRW-MED')>5000:
+                coin = upbit.get_balance('KRW-MED')
+                upbit.sell_market_order("KRW-MED", upbit.get_balance('KRW-MED')*0.9995)
                 print("sell")
-                print('macdo',macd_osc('KRW-DOGE').iloc[-1]['macdo'])
+                print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
                 time.sleep(60)
             else:
                 print('sell__')
-                print('macdo',macd_osc('KRW-DOGE').iloc[-1]['macdo'])
-        elif trading('KRW-DOGE') == 0:
+                print('macdo',macd_osc('KRW-MED').iloc[-1]['macdo'])
+        elif trading('KRW-MED') == 0:
             print('no')
         else :
             pass
