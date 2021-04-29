@@ -8,7 +8,7 @@ secret = "Pc1YbwzPgJxVzwPYF9fPkenfqt3pKi50geoxLruq"
 
 # 로그인
 upbit = pyupbit.Upbit(access, secret)
-# print("autotrade start")
+print("autotrade start")
 
 def get_balance(ticker):
     """잔고 조회"""
