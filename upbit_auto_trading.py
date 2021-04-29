@@ -26,7 +26,7 @@ print("autotrade start")
 
 
 def macd_osc(ticker):
-    df = pyupbit.get_ohlcv(ticker, interval='minute30', count = '200')
+    df = pyupbit.get_ohlcv(ticker, interval='minute1', count = '200')
     macd = df.close.ewm(span=12).mean() - df.close.ewm(span=26).mean()
     macds = macd.ewm(span=9).mean()
     macdo = macd - macds
@@ -55,19 +55,19 @@ def trading(ticker):
 # 자동매매 시작
 while True:
     try:
-        if trading('KRW-DOGE') == 1:
+        if trading('KRW-XRP') == 1:
             krw = get_balance("KRW")
-            upbit.buy_market_order("KRW-DOGE", krw*0.9995)
+            upbit.buy_market_order("KRW-XRP", krw*0.9995)
             print("buy")
-        elif trading('KRW-DOGE') == 2:
-            coin = get_balance("KRW-DOGE")
-            upbit.sell_market_order("KRW-DOGE", coin*0.9995)
+        elif trading('KRW-XRP') == 2:
+            coin = get_balance("KRW-XRP")
+            upbit.sell_market_order("KRW-XRP", coin*0.9995)
             print("sell")
-        elif trading('KRW-DOGE') == 0:
+        elif trading('KRW-XRP') == 0:
             print('no')
         else :
             pass
-        print(macd_osc('KRW-DOGE').iloc[-1]['macdo'])
+        print(macd_osc('KRW-XRP').iloc[-1]['macdo'])
         time.sleep(1)
         
     except Exception as e:
