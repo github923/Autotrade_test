@@ -38,11 +38,11 @@ def trading(ticker):
     df['macdo_is_positive'] = df['macdo'] > 0
     
     if (df.iloc[-2]['macdo_is_positive'] == 1):
-            buy_or_sell = 1
+        buy_or_sell = 1
     elif (df.iloc[-2]['macdo_is_positive'] == 0):
-            buy_or_sell = 2
+        buy_or_sell = 2
     else :
-        pass
+        buy_or_sell = 0
 
     return buy_or_sell
 
