@@ -102,22 +102,22 @@ def macd_osc_df(ticker):
         macdo_min10.append(mins)
     df['macdo_min10'] = macdo_min10
     
-#     macd 양수중에 상위 50퍼 구하기
+#     macd 양수중에 상위 75퍼 구하기
     macdo_positive_count = 0
     for x in range(200):
         if df['macdo'][x] >= 0:
             macdo_positive_count += 1
     macdo_positive_rank = df['macdo'].rank(method='first', ascending=False)
-    macdo_positive_rank_top_50 = macdo_positive_rank < macdo_positive_count*0.5
+    macdo_positive_rank_top_50 = macdo_positive_rank < macdo_positive_count*0.75
     df['macdo_positive_rank_top_50'] = df['macdo'] * macdo_positive_rank_top_50
     
-#     macd 음수중에 하위 50퍼 구하기
+#     macd 음수중에 하위 75퍼 구하기
     macdo_negative_count = 0
     for x in range(200):
         if df['macdo'][x] < 0:
             macdo_negative_count += 1
     macdo_negative_rank = df['macdo'].rank(method='first', ascending=True)
-    macdo_negative_rank_top_50 = macdo_negative_rank < macdo_negative_count*0.5
+    macdo_negative_rank_top_50 = macdo_negative_rank < macdo_negative_count*0.75
     df['macdo_negative_rank_top_50'] = df['macdo'] * macdo_negative_rank_top_50
         
     
@@ -154,20 +154,19 @@ def trading(ticker):
     time.sleep(1)
 
     
-def macdo_min10_in_rank(ticker):
+def macdo_min13_in_rank(ticker):
     df = macd_osc_df(ticker)
     
-    macdo_min10_in_rank = []
-    for x in range(-10,0):
-        macdo_min10_in_rank.append(df['macdo_negative_rank_top_50'][x])
-    last10_smallest_num = min(macdo_min10_in_rank)
+    macdo_min13_in_rank = []
+    for x in range(-13,0):
+        macdo_min13_in_rank.append(df['macdo_negative_rank_top_50'][x])
+    last13_smallest_num = min(macdo_min13_in_rank)
 
-    if last10_smallest_num == 0:
-        print('no')
+    if last13_smallest_num == 0:
         time.sleep(1)
 
-    elif last10_smallest_num < 0:
-        if df['macdo'][-1] >= last10_smallest_num*0.5:
+    elif last13_smallest_num < 0:
+        if last13_smallest_num*0.5 <= df['macdo'][-1] <= last13_smallest_num*0.6:
             krw = upbit.get_balance("KRW")
             if krw>25000:
 #             if krw>5000:
@@ -178,20 +177,19 @@ def macdo_min10_in_rank(ticker):
     else:
         pass
     
-def macdo_max10_in_rank(ticker):
+def macdo_max13_in_rank(ticker):
     df = macd_osc_df(ticker)
     
-    macdo_max10_in_rank = []
-    for x in range(-10,0):
-        macdo_max10_in_rank.append(df['macdo_positive_rank_top_50'][x])
-    last10_largest_num = max(macdo_max10_in_rank)
+    macdo_max13_in_rank = []
+    for x in range(-13,0):
+        macdo_max13_in_rank.append(df['macdo_positive_rank_top_50'][x])
+    last13_largest_num = max(macdo_max13_in_rank)
 
-    if last10_largest_num == 0:
-        print('no')
+    if last13_largest_num == 0:
         time.sleep(1)
 
-    elif last10_largest_num > 0:
-        if df['macdo'][-1] <= last10_largest_num*0.7:
+    elif last13_largest_num > 0:
+        if last13_largest_num*0.65 <= df['macdo'][-1] <= last13_largest_num*0.7:    
             sell_num = float(upbit.get_chance(ticker)['ask_account']['balance'])
             coin_num = upbit.get_balance(ticker)
             coin_price = get_current_price(ticker)
@@ -208,10 +206,10 @@ def macdo_max10_in_rank(ticker):
 def macd_trading(ticker):
     df = macd_osc_df(ticker)
     if df['macdo'][-1] < 0:
-        macdo_min10_in_rank(ticker)
+        macdo_min13_in_rank(ticker)
     
     elif df['macdo'][-1] > 0:
-        macdo_max10_in_rank(ticker)
+        macdo_max13_in_rank(ticker)
 
     return 0
     
@@ -219,11 +217,12 @@ def stop_loss(ticker):
     coin_num = upbit.get_balance(ticker)
     coin_price = get_current_price(ticker)
     if coin_num*coin_price>5000:
-        if upbit.get_avg_buy_price(ticker)*0.99 > get_current_price(ticker):
-            upbit.sell_market_order(ticker, coin_num*0.9995)
+        if upbit.get_avg_buy_price(ticker)*0.993 > get_current_price(ticker):
+            sell_num = float(upbit.get_chance(ticker)['ask_account']['balance'])
+            upbit.sell_market_order(ticker, sell_num)
             print('stop loss')
     
     
 while 1:
-    macd_trading('KRW-DOGE')
-    stop_loss('KRW-DOGE')
+    macd_trading('KRW-BTT')
+    stop_loss('KRW-BTT')
