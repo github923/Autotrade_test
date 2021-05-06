@@ -52,13 +52,13 @@ def count_macdo_positive(ticker):
             macdo_positive_count += 1
     return macdo_positive_count
 
-# macd 양수중에 상위 75퍼 구하기
+# macd 양수중에 상위 50퍼 구하기
 def rank_macdo_positive(ticker):
     df = macd_osc(ticker)
     macdo_positive_count = count_macdo_positive(ticker)
     macdo_positive_rank = df['macdo'].rank(method='first', ascending=False)
-    macdo_positive_rank_top_75 = macdo_positive_rank <= macdo_positive_count*0.75
-    df['macdo_positive_rank_top_75'] = df['macdo'] * macdo_positive_rank_top_75
+    macdo_positive_rank_top_50 = macdo_positive_rank <= macdo_positive_count*0.50
+    df['macdo_positive_rank_top_50'] = df['macdo'] * macdo_positive_rank_top_50
     return df
     
 # macdo 음수 갯수 세기
@@ -70,20 +70,20 @@ def count_macdo_negative(ticker):
             macdo_negative_count += 1
     return macdo_negative_count
 
-# macd 음수중에 상위 75퍼 구하기
+# macd 음수중에 상위 50퍼 구하기
 def rank_macdo_negative(ticker):
     df = macd_osc(ticker)
     macdo_negative_count = count_macdo_negative(ticker)
     macdo_negative_rank = df['macdo'].rank(method='first', ascending=True)
-    macdo_negative_rank_top_75 = macdo_negative_rank <= macdo_negative_count*0.75
-    df['macdo_negative_rank_top_75'] = df['macdo'] * macdo_negative_rank_top_75
+    macdo_negative_rank_top_50 = macdo_negative_rank <= macdo_negative_count*0.50
+    df['macdo_negative_rank_top_50'] = df['macdo'] * macdo_negative_rank_top_50
     return df
     
 def macdo_min13_in_rank(ticker):
     df = rank_macdo_negative(ticker)
     macdo_min13_in_rank = []
     for x in range(-13,0):
-        macdo_min13_in_rank.append(df['macdo_negative_rank_top_75'][x])
+        macdo_min13_in_rank.append(df['macdo_negative_rank_top_50'][x])
     last13_smallest_num = min(macdo_min13_in_rank)
 
     if last13_smallest_num == 0:
@@ -105,7 +105,7 @@ def macdo_max13_in_rank(ticker):
     
     macdo_max13_in_rank = []
     for x in range(-13,0):
-        macdo_max13_in_rank.append(df['macdo_positive_rank_top_75'][x])
+        macdo_max13_in_rank.append(df['macdo_positive_rank_top_50'][x])
     last13_largest_num = max(macdo_max13_in_rank)
 
     if last13_largest_num == 0:
@@ -150,7 +150,7 @@ def min5(ticker):
         krw = upbit.get_balance("KRW")
         if krw>35000:
             df = rank_macdo_negative(ticker)
-            if df['macdo_negative_rank_top_75'][-1] < 0:
+            if df['macdo_negative_rank_top_50'][-1] < 0:
                 macdo_min13_in_rank(ticker)
 #                 if df['macdo'][-1] > df['macdo'][-2]*0.8:
 #                     upbit.buy_market_order(ticker, 10000)
@@ -160,7 +160,7 @@ def min5(ticker):
         coin_price = get_current_price(ticker)
         if coin_num*coin_price > 5000:
             df = rank_macdo_positive(ticker)
-            if df['macdo_positive_rank_top_75'][-1] > 0:
+            if df['macdo_positive_rank_top_50'][-1] > 0:
                 macdo_max13_in_rank(ticker)
 #                 sell_num = float(upbit.get_chance(ticker)['ask_account']['balance'])
 #                 if df['macdo'][-1] < df['macdo'][-2]*0.8:
