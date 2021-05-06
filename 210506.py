@@ -1,3 +1,4 @@
+# 세이브2
 import time
 import pyupbit
 import datetime
@@ -86,17 +87,17 @@ def macdo_min13_in_rank(ticker):
     last13_smallest_num = min(macdo_min13_in_rank)
 
     if last13_smallest_num == 0:
-        pass
+        time.sleep(1)
 
     elif last13_smallest_num < 0:
-        if last13_smallest_num*0.6 <= df['macdo'][-1] <= last13_smallest_num*0.3:
+        if last13_smallest_num*0.6 <= df['macdo'][-1] <= last13_smallest_num*0.5:
             krw = upbit.get_balance("KRW")
-            if krw>25000:
+            if krw>35000:
 #             if krw>5000:
                 upbit.buy_market_order(ticker, 10000)
 #                 upbit.buy_market_order(ticker, krw*0.9995)
                 print("purchase")
-                time.sleep(180)  
+                time.sleep(180)
     return 0
     
 def macdo_max13_in_rank(ticker):
@@ -119,12 +120,6 @@ def macdo_max13_in_rank(ticker):
                 upbit.sell_market_order(ticker, sell_num)
                 print("sell")
                 time.sleep(180)
-            else:
-                pass
-        else:
-            pass
-    else:
-        pass
     return 0
 
 
@@ -153,33 +148,29 @@ def min5(ticker):
     df30 = macd_osc_30(ticker)
     if (df30['macdo'][-1] >= df30['macdo'][-2]):
         krw = upbit.get_balance("KRW")
-        if krw>30000:
+        if krw>35000:
             df = rank_macdo_negative(ticker)
             if df['macdo_negative_rank_top_75'][-1] < 0:
-                if df['macdo'][-1] > df['macdo'][-2]*0.8:
-                    upbit.buy_market_order(ticker, 10000)
-                    print("purchase")
-                    time.sleep(120)
+                macdo_min13_in_rank(ticker)
+#                 if df['macdo'][-1] > df['macdo'][-2]*0.8:
+#                     upbit.buy_market_order(ticker, 10000)
+#                     print("purchase")
+#                     time.sleep(120)
         coin_num = upbit.get_balance(ticker)
         coin_price = get_current_price(ticker)
         if coin_num*coin_price > 5000:
             df = rank_macdo_positive(ticker)
             if df['macdo_positive_rank_top_75'][-1] > 0:
-                sell_num = float(upbit.get_chance(ticker)['ask_account']['balance'])
-                if df['macdo'][-1] < df['macdo'][-2]*0.8:
-                    upbit.sell_market_order(ticker, sell_num)
-                    print("sell")
-                    time.sleep(120)
+                macdo_max13_in_rank(ticker)
+#                 sell_num = float(upbit.get_chance(ticker)['ask_account']['balance'])
+#                 if df['macdo'][-1] < df['macdo'][-2]*0.8:
+#                     upbit.sell_market_order(ticker, sell_num)
+#                     print("sell")
+#                     time.sleep(120)
             stop_loss(ticker)
-            
     return 0
 
             
-            
-            
-            
-            
-            
 while 1:
-    min5('KRW-DOGE')
+    min5('KRW-BTT')
     time.sleep(1)
