@@ -207,4 +207,4 @@ def random_good_tickers():
     return list[0]
 
 while 1:
-    min1('KRW-DOGE')
+    min1('KRW-BTT')
