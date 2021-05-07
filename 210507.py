@@ -49,10 +49,10 @@ def stop_loss(ticker):
 def min1(ticker):
     df1 = macd_osc(ticker, 'minute1')
     df5 = macd_osc(ticker, 'minute5')
-    df30 = macd_osc(ticker, 'minute30')
+    df15 = macd_osc(ticker, 'minute15')
     krw = upbit.get_balance("KRW")
     if krw>35000:
-        if df30['macdo'][-1] > df30['macdo'][-2]:
+        if df15['macdo'][-1] > df15['macdo'][-2]:
             if df5['macdo'][-1] > df5['macdo'][-2]:
                 if df1['macdo'][-1] > df1['macdo'][-2] > df1['macdo'][-3]:
                     upbit.buy_market_order(ticker, 10000)
@@ -65,7 +65,7 @@ def min1(ticker):
             print('stop loss : ',ticker)
             time.sleep(1)
 
-        elif df1['macdo'][-1] < df1['macdo'][-2] < df1['macdo'][-3]:
+        elif df1['macdo'][-1] < df1['macdo'][-2] < df1['macdo'][-3] < df1['macdo'][-4]:
             coin_num = upbit.get_balance(ticker)
             coin_price = get_current_price(ticker)
             sell_num = float(upbit.get_chance(ticker)['ask_account']['balance'])
@@ -77,4 +77,4 @@ def min1(ticker):
     return 0
 
 while 1:
-    min1('KRW-DOGE')
+    min1('KRW-ETH')
