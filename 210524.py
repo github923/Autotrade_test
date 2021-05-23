@@ -1,10 +1,6 @@
 import time
 import datetime
 import pyupbit
-import datetime
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 
 access = "jXmymUVzgyJnixtTcYPfP7axp5YKpceWqBxVBplY"
 secret = "Pc1YbwzPgJxVzwPYF9fPkenfqt3pKi50geoxLruq"
